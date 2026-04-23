@@ -1,19 +1,15 @@
 'use client';
-
 import { useState, useEffect } from 'react';
-
 export default function SettingsPage() {
   const [username, setUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-
   const [invites, setInvites] = useState<any[]>([]);
   const [inviteError, setInviteError] = useState('');
   const [sessionInfo, setSessionInfo] = useState<any>(null);
   const [copiedId, setCopiedId] = useState('');
-
   useEffect(() => {
     fetch('/api/auth/me')
       .then(r => r.json())
@@ -23,7 +19,6 @@ export default function SettingsPage() {
       })
       .catch(() => { window.location.href = '/login'; });
   }, []);
-
   const loadInvites = async () => {
     try {
       const res = await fetch('/api/auth/invites');
@@ -31,7 +26,6 @@ export default function SettingsPage() {
       if (json.data) setInvites(json.data);
     } catch {}
   };
-
   const handleCreateInvite = async (role: string) => {
     setInviteError('');
     try {
@@ -47,7 +41,6 @@ export default function SettingsPage() {
       setInviteError('Збій');
     }
   };
-
   const handleDeleteInvite = async (id: string) => {
     try {
       await fetch('/api/auth/invites', {
@@ -58,19 +51,16 @@ export default function SettingsPage() {
       loadInvites();
     } catch {}
   };
-
   const handleCopy = (id: string, link: string) => {
     navigator.clipboard.writeText(link);
     setCopiedId(id);
     setTimeout(() => setCopiedId(''), 2000);
   };
-
   const getStatus = (inv: any) => {
     if (inv.isUsed) return 'used';
     if (new Date(inv.expiresAt) < new Date()) return 'expired';
     return 'active';
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setSuccess(''); setLoading(true);
@@ -86,11 +76,9 @@ export default function SettingsPage() {
     } catch { setError('Збій підключення'); }
     finally { setLoading(false); }
   };
-
   return (
     <div className="page" style={{ maxWidth: '600px', margin: '0 auto', paddingTop: '40px' }}>
       <h1 className="page-title">Налаштування</h1>
-
       <div style={{ border: '1px solid var(--border)', padding: '20px', marginBottom: '30px' }}>
         <h2 style={{ fontSize: '15px', marginBottom: '16px' }}>Профіль</h2>
         {error && <div className="error-msg">{error}</div>}
@@ -109,21 +97,17 @@ export default function SettingsPage() {
           </button>
         </form>
       </div>
-
       {sessionInfo?.role === 'ADMIN' && (
         <div style={{ border: '1px solid var(--border)', padding: '20px' }}>
           <h2 style={{ fontSize: '15px', marginBottom: '6px' }}>Запрошення</h2>
           <p style={{ color: 'var(--text-dim)', fontSize: '13px', marginBottom: '16px' }}>
             Одноразові посилання, дійсні 1 годину.
           </p>
-
           {inviteError && <div className="error-msg" style={{ marginBottom: '12px' }}>{inviteError}</div>}
-
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
             <button onClick={() => handleCreateInvite('MODERATOR')}>+ Модератор</button>
             <button onClick={() => handleCreateInvite('USER')}>+ Користувач</button>
           </div>
-
           {invites.length === 0 ? (
             <p style={{ color: 'var(--text-dim)', fontSize: '13px', textAlign: 'center', padding: '12px 0' }}>
               Немає посилань
@@ -134,7 +118,6 @@ export default function SettingsPage() {
                 const link = `${window.location.origin}/register/${inv.token}`;
                 const isCopied = copiedId === inv._id;
                 const status = getStatus(inv);
-
                 return (
                   <div key={inv._id} style={{
                     border: '1px solid var(--border)',
@@ -205,7 +188,6 @@ export default function SettingsPage() {
           )}
         </div>
       )}
-
       <div style={{ marginTop: 30, textAlign: 'center' }}>
         <a href="/search" style={{ fontSize: 13 }}>← Назад до пошуку</a>
       </div>

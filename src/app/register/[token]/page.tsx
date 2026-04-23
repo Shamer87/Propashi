@@ -1,22 +1,17 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-
 export default function RegisterInvitePage() {
   const router = useRouter();
   const { token } = useParams();
-  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
   const [inviteValid, setInviteValid] = useState<boolean | null>(null);
   const [inviteRole, setInviteRole] = useState('');
   const [inviteError, setInviteError] = useState('');
-
   useEffect(() => {
     fetch(`/api/auth/invites/${token}`)
       .then(res => res.json())
@@ -34,21 +29,17 @@ export default function RegisterInvitePage() {
         setInviteError('Помилка підключення');
       });
   }, [token]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     try {
       const res = await fetch('/api/auth/register-with-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, username, password }),
       });
-
       const data = await res.json();
-
       if (res.ok) {
         window.location.href = '/search';
       } else {
@@ -60,7 +51,6 @@ export default function RegisterInvitePage() {
       setLoading(false);
     }
   };
-
   if (inviteValid === null) {
     return (
       <div className="form-page">
@@ -70,7 +60,6 @@ export default function RegisterInvitePage() {
       </div>
     );
   }
-
   if (inviteValid === false) {
     return (
       <div className="form-page">
@@ -82,15 +71,12 @@ export default function RegisterInvitePage() {
       </div>
     );
   }
-
   return (
     <div className="form-page">
       <div className="form-box">
         <h2>Реєстрація ({inviteRole === 'MODERATOR' ? 'Модератор' : 'Користувач'})</h2>
         <p className="desc">Ви використовуєте приватне посилання-запрошення. Після реєстрації посилання стане недійсним.</p>
-        
         {error && <div className="error-msg">{error}</div>}
-
         <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
           <div className="form-field">
             <label>Логін</label>
@@ -103,7 +89,6 @@ export default function RegisterInvitePage() {
               placeholder="Придумайте логін"
             />
           </div>
-          
           <div className="form-field">
             <label>Пароль</label>
             <input
@@ -115,7 +100,6 @@ export default function RegisterInvitePage() {
               placeholder="Мінімум 6 символів"
             />
           </div>
-
           <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', justifyContent: 'center' }}>
             {loading ? 'Реєстрація...' : 'Зареєструватись'}
           </button>

@@ -1,9 +1,7 @@
 import dbConnect from '@/lib/mongoose';
 import Person from '@/models/Person';
 import Link from 'next/link';
-
 export const dynamic = 'force-dynamic';
-
 async function getStats() {
   try {
     await dbConnect();
@@ -19,14 +17,11 @@ async function getStats() {
     return { total: 0, killed: 0, missing: 0, captured: 0 };
   }
 }
-
 export default async function DashboardPage() {
   const stats = await getStats();
-
   return (
     <div className="page">
       <h1 className="page-title">Огляд</h1>
-
       <div className="stats-row">
         <div className="stat">
           <div className="stat-value">{stats.total.toLocaleString('uk-UA')}</div>
@@ -45,7 +40,6 @@ export default async function DashboardPage() {
           <div className="stat-label">Полонені</div>
         </div>
       </div>
-
       <div className="about-block">
         <p>
           Проєкт «Пропащі» — система збору та зберігання інформації про 

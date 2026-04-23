@@ -1,8 +1,6 @@
 'use client';
-
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
 type PersonRecord = {
   _id: string;
   fullName: string;
@@ -11,21 +9,14 @@ type PersonRecord = {
   isApproved: boolean;
   createdAt: string;
 };
-
 export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [records, setRecords] = useState<PersonRecord[]>([]);
   const [token, setToken] = useState<string | null>(null);
-
   useEffect(() => {
-    // Fetch user info and their submissions
     Promise.all([
       fetch('/api/auth/me').then(r => r.json()),
-      // We will need to update /api/persons to allow user to fetch their own records
-      // Wait, currently GET /api/persons doesn't return unapproved records for normal users.
-      // Let's create a special endpoint or just update /api/auth/profile to return user + their records.
-      // For now, let's fetch from a new endpoint /api/auth/profile
       fetch('/api/auth/profile').then(r => r.json())
     ]).then(([me, profile]) => {
       if (!me?.userId) {
@@ -40,7 +31,6 @@ export default function ProfilePage() {
       setLoading(false);
     });
   }, []);
-
   const generateToken = async () => {
     try {
       const res = await fetch('/api/auth/telegram-link', { method: 'POST' });
@@ -52,18 +42,15 @@ export default function ProfilePage() {
       console.error(err);
     }
   };
-
   if (loading) {
     return <div className="page"><p>Завантаження...</p></div>;
   }
-
   return (
     <div className="page" style={{ maxWidth: '800px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1 className="page-title" style={{ marginBottom: 0 }}>Особистий кабінет</h1>
         <Link href="/settings" className="btn" style={{ textDecoration: 'none', background: 'var(--card-bg)', border: '1px solid var(--border)' }}>Налаштування (та запрошення)</Link>
       </div>
-      
       <div style={{ background: 'var(--card-bg)', padding: '20px', borderRadius: '8px', border: '1px solid var(--border)', marginBottom: '30px' }}>
         <h2 style={{ marginBottom: '10px' }}>Підключення Telegram</h2>
         {user?.telegramChatId ? (
@@ -88,7 +75,6 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
-
       <h2 style={{ marginBottom: '15px' }}>Мої заявки ({records.length})</h2>
       {records.length === 0 ? (
         <p style={{ color: 'var(--text-dim)' }}>Ви ще не подавали жодної заявки.</p>

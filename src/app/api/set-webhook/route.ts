@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 export const dynamic = 'force-dynamic';
-
 export async function GET(request: NextRequest) {
   const token = process.env.BOT_TOKEN;
   if (!token) {
     return NextResponse.json({ error: 'BOT_TOKEN is missing' }, { status: 500 });
   }
-
-  // Get the current hostname from the request to automatically set the webhook URL
   const protocol = request.headers.get('x-forwarded-proto') || 'https';
   const host = request.headers.get('host');
-  
   if (!host) {
     return NextResponse.json({ error: 'Could not determine host' }, { status: 400 });
   }
-
-  const webhookUrl = \\://\System.Management.Automation.Internal.Host.InternalHost/api/telegram-webhook\;
-  
+  const webhookUrl = `${protocol}://${host}/api/telegram-webhook`;
   try {
-    const response = await fetch(\https://api.telegram.org/bot\/setWebhook?url=\\);
+    const response = await fetch(`https://api.telegram.org/bot${token}/setWebhook?url=${webhookUrl}`);
     const data = await response.json();
-
     if (data.ok) {
-      return NextResponse.json({ success: true, message: \Webhook successfully set to \\ });
+      return NextResponse.json({ success: true, message: `Webhook successfully set to ${webhookUrl}` });
     } else {
       return NextResponse.json({ success: false, error: data.description }, { status: 400 });
     }

@@ -1,13 +1,10 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-
 export default function ModerationPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
   useEffect(() => {
     fetch('/api/auth/me')
       .then(r => r.json())
@@ -22,7 +19,6 @@ export default function ModerationPage() {
         window.location.href = '/login';
       });
   }, []);
-
   const loadPending = async () => {
     try {
       const res = await fetch('/api/persons?isApproved=false&sortField=createdAt&sortOrder=desc&limit=100');
@@ -35,7 +31,6 @@ export default function ModerationPage() {
       setLoading(false);
     }
   };
-
   const handleApprove = async (id: string) => {
     try {
       const res = await fetch(`/api/persons/${id}`, {
@@ -48,7 +43,6 @@ export default function ModerationPage() {
       }
     } catch {}
   };
-
   const handleReject = async (id: string) => {
     if (!confirm('Видалити цю анкету?')) return;
     try {
@@ -60,7 +54,6 @@ export default function ModerationPage() {
       }
     } catch {}
   };
-
   const statusText = (s: string) => {
     switch (s) {
       case 'KILLED': return 'Загинув';
@@ -69,25 +62,20 @@ export default function ModerationPage() {
       default: return 'Невідомо';
     }
   };
-
   const fmtDate = (d: string) => {
     if (!d) return '—';
     const date = new Date(d);
     if (isNaN(date.getTime())) return '—';
     return date.toLocaleDateString('uk-UA');
   };
-
   if (loading) return <div className="page"><p>Завантаження...</p></div>;
-
   return (
     <div className="page">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1 className="page-title">Модерація анкет</h1>
         <span style={{ color: 'var(--text-dim)', fontSize: '13px' }}>{data.length} на розгляді</span>
       </div>
-
       {error && <div className="error-msg">{error}</div>}
-
       {data.length === 0 ? (
         <p style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-dim)' }}>Нових анкет на модерацію немає</p>
       ) : (

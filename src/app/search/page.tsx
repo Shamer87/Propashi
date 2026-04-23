@@ -1,10 +1,8 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { Search, ArrowUp, ArrowDown } from 'lucide-react';
 import Link from 'next/link';
-
-type PersonRecord = {
+export type PersonRecord = {
   _id: string;
   externalId?: string;
   status: string;
@@ -16,13 +14,11 @@ type PersonRecord = {
   locationOfEvent?: string;
   isApproved?: boolean;
 };
-
 export default function SearchPage() {
   const [data, setData] = useState<PersonRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [sessionRole, setSessionRole] = useState('');
-
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('');
   const [unit, setUnit] = useState('');
@@ -31,25 +27,19 @@ export default function SearchPage() {
   const [dobEnd, setDobEnd] = useState('');
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
-
   const [sortField, setSortField] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-
   const [showFilters, setShowFilters] = useState(false);
   const [isGuest, setIsGuest] = useState(true);
-
-  // Captcha state
   const [captcha, setCaptcha] = useState({ a: 0, b: 0, answer: 0, input: '', solved: false });
-
   const generateCaptcha = () => {
     const a = Math.floor(Math.random() * 10) + 1;
     const b = Math.floor(Math.random() * 10) + 1;
     setCaptcha({ a, b, answer: a + b, input: '', solved: false });
   };
-
   const fetchResults = async () => {
     setLoading(true);
     try {
@@ -66,11 +56,9 @@ export default function SearchPage() {
       params.append('sortOrder', sortOrder);
       params.append('page', page.toString());
       params.append('limit', '50');
-
       const res = await fetch(`/api/persons?${params.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch');
       const json = await res.json();
-
       setData(json.data || []);
       setTotalPages(json.pagination?.totalPages || 1);
       setTotalRecords(json.pagination?.total || 0);
@@ -81,14 +69,13 @@ export default function SearchPage() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetch('/api/auth/me')
       .then(r => r.json())
       .then(d => {
         if (d?.role) {
           setSessionRole(d.role);
-          setCaptcha({ ...captcha, solved: true }); // Automatically solve for logged in
+          setCaptcha({ ...captcha, solved: true }); 
         } else {
           setSessionRole('GUEST');
           generateCaptcha();
@@ -101,13 +88,11 @@ export default function SearchPage() {
         setSessionChecked(true);
       });
   }, []);
-
   useEffect(() => {
     if (!sessionChecked || !captcha.solved) return;
     const t = setTimeout(() => fetchResults(), 400);
     return () => clearTimeout(t);
   }, [query, status, unit, location, dobStart, dobEnd, dateStart, dateEnd, sortField, sortOrder, page, sessionChecked, captcha.solved]);
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -117,14 +102,12 @@ export default function SearchPage() {
     }
     setPage(1);
   };
-
   const SortIcon = ({ field }: { field: string }) => {
     if (sortField !== field) return null;
     return sortOrder === 'asc'
       ? <ArrowUp size={12} style={{ marginLeft: 2 }} />
       : <ArrowDown size={12} style={{ marginLeft: 2 }} />;
   };
-
   const statusText = (s: string) => {
     switch (s) {
       case 'KILLED': return 'Загинув';
@@ -133,11 +116,9 @@ export default function SearchPage() {
       default: return 'Невідомо';
     }
   };
-
   if (!sessionChecked) {
     return <div className="page"><p>Перевірка доступу...</p></div>;
   }
-
   if (!captcha.solved) {
     return (
       <div className="page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -173,11 +154,9 @@ export default function SearchPage() {
       </div>
     );
   }
-
   return (
     <div className="page">
-
-      {/* Search row */}
+      {}
       <div className="search-row">
         <div className="search-field">
           <Search size={14} />
@@ -197,10 +176,8 @@ export default function SearchPage() {
         <button onClick={() => setShowFilters(!showFilters)}>
           {showFilters ? 'Сховати фільтри' : 'Фільтри'}
         </button>
-
       </div>
-
-      {/* Filters panel */}
+      {}
       {showFilters && (
         <div className="filters-panel">
           <div className="filters-grid">
@@ -229,8 +206,7 @@ export default function SearchPage() {
           </div>
         </div>
       )}
-
-      {/* Table */}
+      {}
       <div className="table-container">
         <div className="table-toolbar">
           <span className="count">
@@ -244,7 +220,6 @@ export default function SearchPage() {
             )}
           </span>
         </div>
-
         <div style={{ overflowX: 'auto' }}>
           <table>
             <thead>
@@ -299,7 +274,6 @@ export default function SearchPage() {
             </tbody>
           </table>
         </div>
-
         {!loading && totalPages > 1 && (
           <div className="pagination-row">
             <button disabled={page === 1} onClick={() => setPage(p => Math.max(1, p - 1))}>←</button>

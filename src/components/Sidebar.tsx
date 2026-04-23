@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -9,18 +8,15 @@ const defaultLinks = [
   { href: '/map', label: 'Карта' },
   { href: '/submit', label: 'Додати' },
 ];
-
 export function Sidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [links, setLinks] = useState(defaultLinks);
   const [isLogged, setIsLogged] = useState(false);
-
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     window.location.href = '/login';
   };
-
   useEffect(() => {
     fetch('/api/auth/me')
       .then(r => r.json())
@@ -30,7 +26,6 @@ export function Sidebar() {
           newLinks.push({ href: '/moderation', label: 'Модерація' });
         }
         if (d?.role) {
-          // If logged in (any role), show profile and settings
           newLinks.push({ href: '/profile', label: 'Кабінет' });
           newLinks.push({ href: '/settings', label: 'Налаштування' });
           setIsLogged(true);
@@ -39,7 +34,6 @@ export function Sidebar() {
       })
       .catch(() => {});
   }, []);
-
   return (
     <header className="site-header">
       <div style={{ display: 'flex', alignItems: 'center', gap: '24px', height: '100%' }}>
@@ -63,7 +57,6 @@ export function Sidebar() {
           )}
         </nav>
       </div>
-
       <button
         className="mobile-toggle"
         onClick={() => setMobileOpen(!mobileOpen)}
@@ -71,7 +64,6 @@ export function Sidebar() {
       >
         {mobileOpen ? '✕' : '≡'}
       </button>
-
       <div className={`mobile-nav ${mobileOpen ? 'open' : ''}`}>
         {links.map(l => (
           <Link

@@ -1,14 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
 export interface IPerson extends Document {
-  externalId?: string; // id from CSV
+  externalId?: string; 
   status: 'KILLED' | 'MISSING' | 'CAPTURED' | 'UNKNOWN';
   fullName: string;
   dob?: string;
   dobParsed?: Date;
   callsign?: string;
   jeton?: string;
-  pob?: string; // place of birth
+  pob?: string; 
   unit?: string;
   dateOfEvent?: string;
   dateOfEventParsed?: Date;
@@ -17,21 +16,16 @@ export interface IPerson extends Document {
   placeOfResidence?: string;
   specialFeatures?: string;
   extraInfo?: string;
-  
-  // Custom fields for Map & Application logic
   coordinates?: {
     lat: number;
     lng: number;
   };
   photos?: string[];
-
-  // Audit Fields
   submittedBy?: mongoose.Types.ObjectId;
-  isApproved: boolean; // Moderation flag
+  isApproved: boolean; 
   createdAt: Date;
   updatedAt: Date;
 }
-
 const PersonSchema: Schema = new Schema({
   externalId: { type: String },
   status: { type: String, enum: ['KILLED', 'MISSING', 'CAPTURED', 'UNKNOWN'], default: 'UNKNOWN' },
@@ -49,18 +43,13 @@ const PersonSchema: Schema = new Schema({
   placeOfResidence: { type: String },
   specialFeatures: { type: String },
   extraInfo: { type: String },
-
   coordinates: {
     lat: { type: Number },
     lng: { type: Number }
   },
   photos: [{ type: String }],
-
   submittedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-  isApproved: { type: Boolean, default: true }, // For CSV seeding it's true, for manual submissions it will be default false
+  isApproved: { type: Boolean, default: true }, 
 }, { timestamps: true });
-
-// Avoid OverwriteModelError
 const Person = mongoose.models.Person || mongoose.model<IPerson>('Person', PersonSchema);
-
 export default Person;

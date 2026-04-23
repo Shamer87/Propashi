@@ -1,5 +1,4 @@
 'use client';
-
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
@@ -8,13 +7,11 @@ import 'leaflet-defaulticon-compatibility';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import { PersonRecord } from '@/app/search/page'; // or just any
+import { PersonRecord } from '@/app/search/page'; 
 import Link from 'next/link';
-
 interface MapProps {
   persons: any[];
 }
-
 const statusText = (s: string) => {
   switch (s) {
     case 'KILLED': return 'Загинув';
@@ -23,11 +20,8 @@ const statusText = (s: string) => {
     default: return 'Невідомо';
   }
 };
-
 export default function MapComponent({ persons }: MapProps) {
-  // Center map on Ukraine
   const defaultCenter: [number, number] = [48.3794, 31.1656];
-
   return (
     <MapContainer center={defaultCenter} zoom={6} style={{ height: '100%', width: '100%' }}>
       <TileLayer

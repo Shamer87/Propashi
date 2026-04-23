@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-
 export interface IBotSession extends Document {
   chatId: number;
   step: string;
@@ -13,7 +12,6 @@ export interface IBotSession extends Document {
     extraInfo: string;
   };
 }
-
 const BotSessionSchema = new Schema<IBotSession>({
   chatId: { type: Number, required: true, unique: true },
   step: { type: String, required: true },
@@ -27,5 +25,4 @@ const BotSessionSchema = new Schema<IBotSession>({
     extraInfo: { type: String, default: '' }
   }
 }, { timestamps: true });
-
 export default (mongoose.models.BotSession as Model<IBotSession>) || mongoose.model<IBotSession>('BotSession', BotSessionSchema);
